@@ -11,26 +11,26 @@ defmodule AdventOfCode2021.Day2 do
     end)
   end
 
-  def part1() do
-    {pos, depth} =
+  def part2() do
+    {pos, depth, _aim} =
       input2()
       |> prepare_input()
-      |> Enum.reduce({0, 0}, fn cmd, acc -> execute_cmd(cmd, acc) end)
+      |> Enum.reduce({0, 0, 0}, fn cmd, acc -> execute_cmd(cmd, acc) end)
       |> IO.inspect()
 
     pos * depth
   end
 
-  defp execute_cmd({:forward, value}, {pos, depth}) do
-    {pos + value, depth}
+  defp execute_cmd({:forward, value}, {pos, depth, aim}) do
+    {pos + value, depth + aim * value, aim}
   end
 
-  defp execute_cmd({:down, value}, {pos, depth}) do
-    {pos, depth + value}
+  defp execute_cmd({:down, value}, {pos, depth, aim}) do
+    {pos, depth, aim + value}
   end
 
-  defp execute_cmd({:up, value}, {pos, depth}) do
-    {pos, depth - value}
+  defp execute_cmd({:up, value}, {pos, depth, aim}) do
+    {pos, depth, aim - value}
   end
 
   def input() do
