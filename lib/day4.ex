@@ -65,6 +65,34 @@ defmodule AdventOfCode2021.Day4 do
     end)
   end
 
+  def part2() do
+    {bingo_input, boards} =
+      input()
+      |> prepare_input()
+      |> IO.inspect(label: "bingo")
+
+    {_bingo_numbers, completed, _remaining_boards, last_winning_combination} =
+      bingo_input
+      |> Enum.reduce(
+        {MapSet.new(), [], boards, nil},
+        fn number, {bingo_numbers, completed, remaining_boards, last_winning} ->
+          bingo_numbers = MapSet.put(bingo_numbers, number)
+
+          case Enum.split_with(remaining_boards, &Board.bingo?(&1, bingo_numbers)) do
+            {[], remaining} ->
+              {bingo_numbers, completed, remaining, last_winning}
+
+            {new_completed, remaining} ->
+              {bingo_numbers, completed ++ new_completed, remaining, {bingo_numbers, number}}
+          end
+        end
+      )
+
+    {last_bingo, number} = last_winning_combination
+    last_completed_board = completed |> Enum.reverse() |> hd()
+    Board.score(last_completed_board, last_bingo, number)
+  end
+
   def prepare_input(lines) do
     [bingo_numbers | board_lines] =
       lines
