@@ -83,7 +83,7 @@ defmodule AdventOfCode2021.Day4 do
               {bingo_numbers, completed, remaining, last_winning}
 
             {new_completed, remaining} ->
-              {bingo_numbers, completed ++ new_completed, remaining, {bingo_numbers, number}}
+              {bingo_numbers, new_completed, remaining, {bingo_numbers, number}}
           end
         end
       )
