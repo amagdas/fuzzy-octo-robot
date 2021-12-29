@@ -15,10 +15,27 @@ defmodule AdventOfCode2021.Day5 do
   end
 
   def part1() do
-    large_input()
+    input()
     |> prepare_input()
-    |> Enum.filter(fn {[x1, y1], [x2, y2]} -> x1 == x2 || y1 == y2 end)
-    |> Enum.map(&generate_pairs/1)
+    |> generate_lines()
+    |> calculate_intersections()
+  end
+
+  def part2() do
+    lines =
+      large_input()
+      |> prepare_input()
+
+    line_pairs = lines |> generate_lines()
+
+    diagonal_pairs = lines |> generate_diagonals()
+
+    (line_pairs ++ diagonal_pairs)
+    |> calculate_intersections()
+  end
+
+  def calculate_intersections(lines) do
+    lines
     |> Enum.concat()
     |> Enum.frequencies()
     |> Enum.reduce(0, fn {_key, val}, acc ->
@@ -29,8 +46,28 @@ defmodule AdventOfCode2021.Day5 do
     end)
   end
 
-  def generate_pairs({[x1, y1], [x2, y2]}) do
+  def generate_lines(lines) do
+    lines
+    |> Enum.filter(fn {[x1, y1], [x2, y2]} -> x1 == x2 || y1 == y2 end)
+    |> Enum.map(&generate_line_pairs/1)
+  end
+
+  def generate_diagonals(lines) do
+    lines
+    |> Enum.filter(fn {[x1, y1], [x2, y2]} ->
+      abs(x1 - x2) == abs(y1 - y2)
+    end)
+    |> Enum.map(&generate_diagonal_pairs/1)
+  end
+
+  def generate_line_pairs({[x1, y1], [x2, y2]}) do
     for x <- x1..x2, y <- y1..y2, do: {x, y}
+  end
+
+  def generate_diagonal_pairs({[x1, y1], [x2, y2]}) do
+    xs = x1..x2 |> Enum.to_list()
+    ys = y1..y2 |> Enum.to_list()
+    Enum.zip(xs, ys)
   end
 
   def input() do
